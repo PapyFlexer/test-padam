@@ -9,15 +9,40 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data:[]
+      data:[],
+      trips:[]
     }
   }
   
   handleStopPointChanged( value ) {
-    console.log(value)
+    console.log(value);
+    this.findTrips(value);
+  }
+
+  async findTrips( stationName )
+  {
+    let url = 'https://6130d11c8066ca0017fdaa97.mockapi.io/trips?departureStop='+stationName;
+    this.loadTrips(url);
+  }
+
+  async loadTrips(url)
+  {
+     try {
+      // recuperation des trajets
+      fetch(url)
+      .then(res => res.json())
+      // tri des trajets en fonction des points de depart
+      .then(json => json.sort((a,b) => a.departureStop.localeCompare(b.departureStop)))
+      .then(json => this.setState({ trips : json }))
+    } catch (error) {
+        //log error
+        console.log(error);
+    }
   }
  
-  async componentDidMount(){
+ 
+   componentDidMount(){
+    //this.loadTrips('https://6130d11c8066ca0017fdaa97.mockapi.io/trips');
     try {
       // recuperation liste de points de depart
       fetch(`https://6130d11c8066ca0017fdaa97.mockapi.io/stops`)
@@ -31,15 +56,12 @@ class App extends React.Component {
   render(){
       return (
     <div className="App">
-  
-
-
-      <Dropdown>
+       <Dropdown>
         <Dropdown.Toggle variant="success" id="dropdown-basic">
           Choix du point de depart
         </Dropdown.Toggle>
 
-        <Dropdown.Menu onChang={(e)=>{this.handleStopPointChanged(e.value)}}e>
+        <Dropdown.Menu onChange={(e)=>{this.handleStopPointChanged(e.value)}}e>
         {
           // on boucle sur l'array de pointspour construire les items
           this.state.data.map(title => (
@@ -49,7 +71,7 @@ class App extends React.Component {
         </Dropdown.Menu>
       </Dropdown>
 
-      <CoursesGrid/>   
+      <CoursesGrid data={this.state.trips}/>   
       
    </div>
     )

@@ -10,12 +10,13 @@ class ButtonWithAlert extends React.Component {
         this.handleDismiss = this.handleDismiss.bind(this);
         this.handleShow = this.handleShow.bind(this);
         this.state = {
-            show: false
+            tripId: this.props.id,
+            show: false //,tripId:super.props.id
         };
     }
 
     // ajouter l'appel à l'API pour valider la course ou dire qu'il y a eu un pb
-    // url = "https://6130d11c8066ca0017fdaa97.mockapi.io/book/:tripId"
+    // url = "https://6130d11c8066ca0017fdaa97.mockapi.io/book/:"tripId""
     // retour : si on obtient {"success:true} tout baigne sinon retour au tableau de course"}
 
 
@@ -26,11 +27,27 @@ class ButtonWithAlert extends React.Component {
     }
   
     handleShow() {
-      this.setState({ show: true });
+        async function testReservation() {
+            // requete vers reservation
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            };
+            // recuperation tripId
+            let reqURL = 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:'+this.state.tripId;
+            fetch(reqURL, requestOptions)
+                .then(response => response.json())
+                .then(data => this.setState({
+                    show : data.success
+                }));
+        }
+        testReservation();
     }
   
-    render() {
-    // ajouter la generation pour echec {"success":false"}
+    render() 
+    {
       if (this.state.show) {
         return (
           <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
@@ -47,6 +64,6 @@ class ButtonWithAlert extends React.Component {
   
       return <Button  variant="success" onClick={this.handleShow}>Commander course</Button>;
     }
-  }
+}
   
-  export default ButtonWithAlert;
+export default ButtonWithAlert;
