@@ -9,6 +9,7 @@ class ButtonWithAlert extends React.Component {
         super(props);
         this.handleDismiss = this.handleDismiss.bind(this);
         this.handleShow = this.handleShow.bind(this);
+        this.setUrl = this.setUrl.bind(this);
         this.state = {
             tripId: this.props.id,
             show: false,
@@ -26,6 +27,10 @@ class ButtonWithAlert extends React.Component {
     handleDismiss() {
       this.setState({ show: false });
     }
+    setUrl() {
+      return 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:'+this.state.tripId
+    }
+
     async testReservation() {
       // requete vers reservation
       const requestOptions = {
@@ -35,13 +40,13 @@ class ButtonWithAlert extends React.Component {
           }
       };
       // recuperation tripId
-      let reqURL = 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:52';
+      //let reqURL = 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:52';
+      let reqURL = this.setUrl();
       fetch(reqURL, requestOptions)
           .then(response => response.json())
           .then(data => this.setState({
-              show : true
-              ,
-              success:Date.success
+              show : true,
+              success:data.success
           }));
   }
   
