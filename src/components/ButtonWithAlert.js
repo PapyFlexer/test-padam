@@ -28,7 +28,7 @@ class ButtonWithAlert extends React.Component {
       this.setState({ show: false });
     }
     setUrl() {
-      return 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:'+this.state.tripId
+      return 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/'+this.state.tripId
     }
 
     async testReservation() {
