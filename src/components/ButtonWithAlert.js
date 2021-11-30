@@ -11,7 +11,8 @@ class ButtonWithAlert extends React.Component {
         this.handleShow = this.handleShow.bind(this);
         this.state = {
             tripId: this.props.id,
-            show: false //,tripId:super.props.id
+            show: false,
+            success: false 
         };
     }
 
@@ -25,41 +26,59 @@ class ButtonWithAlert extends React.Component {
     handleDismiss() {
       this.setState({ show: false });
     }
+    async testReservation() {
+      // requete vers reservation
+      const requestOptions = {
+          method: 'PUT',
+          headers: {
+          'Content-Type': 'application/json'
+          }
+      };
+      // recuperation tripId
+      let reqURL = 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:52';
+      fetch(reqURL, requestOptions)
+          .then(response => response.json())
+          .then(data => this.setState({
+              show : true
+              ,
+              success:Date.success
+          }));
+  }
+  
   
     handleShow() {
-        async function testReservation() {
-            // requete vers reservation
-            const requestOptions = {
-                method: 'PUT',
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            };
-            // recuperation tripId
-            let reqURL = 'https://6130d11c8066ca0017fdaa97.mockapi.io/book/:'+this.state.tripId;
-            fetch(reqURL, requestOptions)
-                .then(response => response.json())
-                .then(data => this.setState({
-                    show : data.success
-                }));
-        }
-        testReservation();
+        this.testReservation();
     }
   
     render() 
     {
       if (this.state.show) {
-        return (
-          <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
-            <h4>Confirmation!</h4>
-            <p>
-              Votre course a bien été commandée
-            </p>
-            <p>
-              <Button onClick={this.handleDismiss}>Refermer</Button>
-            </p>
-          </Alert>
-        );
+        if (this.state.success) {
+          return (
+            <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
+              <h4>Confirmation!</h4>
+              <p>
+                Votre course a bien été commandée
+              </p>
+              <p>
+                <Button onClick={this.handleDismiss}>Refermer</Button>
+              </p>
+            </Alert>
+          );
+        } else if (!this.state.success)
+        {
+          return (
+            <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
+              <h4>Erreur!</h4>
+              <p>
+                Votre course n'a pas pu etre commandée
+              </p>
+              <p>
+                <Button onClick={this.handleDismiss}>Refermer</Button>
+              </p>
+            </Alert>
+          );
+        }
       }
   
       return <Button  variant="success" onClick={this.handleShow}>Commander course</Button>;
